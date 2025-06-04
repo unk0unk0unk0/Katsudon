@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 SYSMON_CFG = "sysmon_config.xml"
 BACKUP_CFG = "current_sysmon_config.xml"
-OUTPUT_PREFIX = "Geriben"
+OUTPUT_PREFIX = "Katsudon"
 EVENTLOG_NAME = "Microsoft-Windows-Sysmon/Operational"
 MAX_LOG_SIZE_BYTES  = 1 * 1024 * 1024 * 1024 # 1 GiB
 
