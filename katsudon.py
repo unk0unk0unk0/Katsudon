@@ -52,9 +52,10 @@ def set_log_size(size):
 def clear_eventlog():
     run(["wevtutil", "cl", EVENTLOG_NAME])
 
-def backup_sysmon_config(exe, dst):
-    with open(dst, "w", encoding="utf-8") as fh:
-        run([exe, "-c"], stdout=fh)
+def backup_sysmon_config(exe):
+    cp = run([exe, "-c"])
+    m  = re.search(r"- Config file:\s+(.*)", cp.stdout)
+    return m.group(1).strip() if m else None
 
 def restore_sysmon_config(exe, cfg_path):
     if cfg_path:
