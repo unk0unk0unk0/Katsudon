@@ -11,7 +11,6 @@ from datetime import datetime
 from shutil import which
 
 SYSMON_CFG = "sysmon_config.xml"
-BACKUP_CFG = "current_sysmon_config.xml"
 OUTPUT_PREFIX = "Katsudon"
 EVENTLOG_NAME = "Microsoft-Windows-Sysmon/Operational"
 MAX_LOG_SIZE_BYTES  = 1 * 1024 * 1024 * 1024 # 1 GiB
@@ -57,8 +56,9 @@ def backup_sysmon_config(exe, dst):
     with open(dst, "w", encoding="utf-8") as fh:
         run([exe, "-c"], stdout=fh)
 
-def restore_sysmon_config(exe, src):
-    run([exe, "-c", src])
+def restore_sysmon_config(exe, cfg_path):
+    if cfg_path:
+        run([exe, "-c", cfg_path])
 
 def install_or_update_sysmon(exe, running):
     arg = "-c" if running else "-i"
@@ -88,10 +88,13 @@ def main():
     was_running  = sysmon_running(service)
 
     orig_log_size = get_current_log_size() if was_running else None
+    original_cfg_path = None
     if was_running:
         print("[*] Existing Sysmon detected – backing up configuration and log size")
-        backup_sysmon_config(exe, BACKUP_CFG)
+        original_cfg_path = backup_sysmon_config(exe)
+
         print(f"    Current log size limit: {orig_log_size} bytes")
+        print(f"    Current Config file: {original_cfg_path}")
     else:
         print("[*] Sysmon is not running – installing a temporary instance")
 
@@ -119,7 +122,7 @@ def main():
     print("[*] Performing cleanup")
     if was_running:
         print("    Restoring original Sysmon configuration/log size")
-        restore_sysmon_config(exe, BACKUP_CFG)
+        restore_sysmon_config(exe, original_cfg_path)
         if orig_log_size:
             set_log_size(orig_log_size)
     else:
