@@ -2,17 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import ctypes
-import os
 import platform
 import re
-import signal
 import time
 import subprocess
 import sys
-from pathlib import Path
 from datetime import datetime
 from shutil import which
-from tempfile import TemporaryDirectory
 
 SYSMON_CFG = "sysmon_config.xml"
 BACKUP_CFG = "current_sysmon_config.xml"
@@ -66,8 +62,6 @@ def restore_sysmon_config(exe, src):
 
 def install_or_update_sysmon(exe, running):
     arg = "-c" if running else "-i"
-#    run([exe, "-accepteula", arg, SYSMON_CFG])
-#    run([exe, arg, SYSMON_CFG])
     if arg == "-i":
         run([exe, arg, SYSMON_CFG], stdout=None, stderr=None)
     else:
